@@ -1,4 +1,4 @@
-package co.harborbytes.wortedeck.user;
+package co.harborbytes.wortedeck.usermanagement;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

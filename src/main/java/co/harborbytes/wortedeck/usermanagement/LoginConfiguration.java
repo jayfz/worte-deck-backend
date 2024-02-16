@@ -1,4 +1,4 @@
-package co.harborbytes.wortedeck.user;
+package co.harborbytes.wortedeck.usermanagement;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,14 +31,14 @@ public class LoginConfiguration {
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService());
         authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager (AuthenticationConfiguration config) throws Exception{
+    public AuthenticationManager authenticationManager (final AuthenticationConfiguration config) throws Exception{
         return config.getAuthenticationManager();
     }
 }

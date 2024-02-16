@@ -1,4 +1,4 @@
-package co.harborbytes.wortedeck.user;
+package co.harborbytes.wortedeck.usermanagement;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,7 +20,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtTokenUtil jwtTokenUtil;
     private final UserRepository userRepository;
-    private UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
 
 
     public JwtTokenFilter(final JwtTokenUtil jwtTokenUtil, final UserRepository userRepository, final UserDetailsService userDetailsService) {
@@ -30,7 +30,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws ServletException, IOException {
         final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (authorizationHeader == null || authorizationHeader.isEmpty() || !authorizationHeader.startsWith("Bearer ")) {

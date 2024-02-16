@@ -1,6 +1,5 @@
-package co.harborbytes.wortedeck.user.dto;
+package co.harborbytes.wortedeck.usermanagement.dto;
 
-import co.harborbytes.wortedeck.user.User;
 import lombok.Getter;
 import lombok.Setter;
 

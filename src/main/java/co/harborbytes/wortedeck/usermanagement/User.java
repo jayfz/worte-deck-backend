@@ -1,4 +1,4 @@
-package co.harborbytes.wortedeck.user;
+package co.harborbytes.wortedeck.usermanagement;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

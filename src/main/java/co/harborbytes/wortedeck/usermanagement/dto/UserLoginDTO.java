@@ -1,4 +1,4 @@
-package co.harborbytes.wortedeck.user.dto;
+package co.harborbytes.wortedeck.usermanagement.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
