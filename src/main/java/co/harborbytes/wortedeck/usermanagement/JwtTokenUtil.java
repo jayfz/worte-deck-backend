@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -22,9 +23,10 @@ public class JwtTokenUtil {
     private final Long expiration;
     private final SecretKey key;
 
+    @Autowired
     public JwtTokenUtil(@Value("${jwt.secret}") final String secret, @Value("${jwt.expiration}") final Long expiration) {
         this.expiration = expiration;
-        this.key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secret));
+        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
     public String generateToken(final UserDetails userDetails) {
@@ -48,7 +50,7 @@ public class JwtTokenUtil {
                 .subject(subject)
                 .issuedAt(issuedAt)
                 .expiration(expirationDate)
-                .signWith(key, SignatureAlgorithm.ES512)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 

@@ -22,7 +22,6 @@ public class UserService {
     private final GoogleTokenVerificationService googleTokenVerificationService;
 
     @Autowired
-
     public UserService(final UserRepository userRepository, final UserMapper userMapper, final PasswordEncoder passwordEncoder, final JwtTokenUtil jwtTokenUtil, final AuthenticationManager authenticationManager, final GoogleTokenVerificationService googleTokenVerificationService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
