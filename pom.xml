@@ -88,6 +88,11 @@
 			<version>1.0.2</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>1.6.0.Beta1</version>
+		</dependency>
 		<!--Testing dependencies-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
