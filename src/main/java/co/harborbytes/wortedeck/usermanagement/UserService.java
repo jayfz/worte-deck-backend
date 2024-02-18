@@ -35,10 +35,6 @@ public class UserService {
     @Transactional
     public String register(final UserCreateInputDTO userCreateInputDTO) {
 
-        userRepository.findByEmail(userCreateInputDTO.getEmail()).ifPresent((foundUser) -> {
-            throw new RuntimeException("User already exists, please log in instead");
-        });
-
         final User user = userMapper.dtoToUser(userCreateInputDTO);
         user.setPassword(passwordEncoder.encode(userCreateInputDTO.getPassword()));
         user.setRole(Role.USER);
