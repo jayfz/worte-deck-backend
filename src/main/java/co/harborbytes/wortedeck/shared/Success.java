@@ -1,4 +1,4 @@
-package co.harborbytes.wortedeck.apiresponse;
+package co.harborbytes.wortedeck.shared;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
@@ -11,7 +11,7 @@ import org.springframework.data.domain.Page;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Success<T> {
 
-    private final String status = "success";
+    private final String outcome = "success";
     private final T data;
     private PageSummary page;
 
