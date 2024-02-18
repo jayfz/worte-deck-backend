@@ -18,7 +18,9 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(name = "user_email_unique", columnNames = "email")
+})
 public class User implements UserDetails {
 
     @Id
@@ -35,10 +37,11 @@ public class User implements UserDetails {
     @Column(name = "last_name", length = 64)
     private String lastName;
 
-    @NotEmpty
+    @NotNull
+    @Size(min = 8, max = 64)
     private String password;
 
-    @NotNull
+    @NotEmpty
     @Email
     private String email;
 

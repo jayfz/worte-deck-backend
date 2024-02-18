@@ -11,17 +11,18 @@ import lombok.Setter;
 @Setter
 public class UserCreateInputDTO {
     @NotNull
-    @Size(min = 2, max = 128)
+    @Size(min = 2, max = 64)
     private String firstName;
 
     @NotNull
-    @Size(min = 2, max = 128)
+    @Size(min = 2, max = 64)
     private String lastName;
 
-    @NotEmpty
+    @NotNull
+    @Size(min = 8, max = 64)
     private String password;
 
-    @NotNull
+    @NotEmpty
     @Email
     private String email;
 }
