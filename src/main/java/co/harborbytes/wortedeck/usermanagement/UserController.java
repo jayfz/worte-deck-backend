@@ -2,6 +2,7 @@ package co.harborbytes.wortedeck.usermanagement;
 
 
 import co.harborbytes.wortedeck.shared.Success;
+import co.harborbytes.wortedeck.usermanagement.dto.GoogleUserLoginDTO;
 import co.harborbytes.wortedeck.usermanagement.dto.UserAuthenticatedDTO;
 import co.harborbytes.wortedeck.usermanagement.dto.UserCreateInputDTO;
 import co.harborbytes.wortedeck.usermanagement.dto.UserLoginDTO;
@@ -37,7 +38,7 @@ public class UserController {
 
     @PostMapping("/google/login")
     @ResponseStatus(HttpStatus.OK)
-    public Success<UserAuthenticatedDTO> googleLogin(@RequestBody final String token){
-        return new Success<>(userService.googleLogin(token));
+    public Success<UserAuthenticatedDTO> googleLogin(@RequestBody @Validated final GoogleUserLoginDTO login){
+        return new Success<>(userService.googleLogin(login.getIdToken()));
     }
 }

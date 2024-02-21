@@ -160,9 +160,9 @@ class UserControllerIntegrationTest {
                         .andExpect(status().isOk())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.outcome", is("success")))
-                        .andExpect(jsonPath("$.data.user", is(notNullValue())))
-                        .andExpect(jsonPath("$.data.token", is(notNullValue())))
-                        .andExpect(jsonPath("$.data.expirationDate", is(notNullValue())));
+                        .andExpect(jsonPath("$.payload.user", is(notNullValue())))
+                        .andExpect(jsonPath("$.payload.token", is(notNullValue())))
+                        .andExpect(jsonPath("$.payload.expirationDate", is(notNullValue())));
             }
 
             @ParameterizedTest(name = "username: {2} and password: {3}")
@@ -187,7 +187,7 @@ class UserControllerIntegrationTest {
                         .andExpect(status().isCreated())
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.outcome", is("success")))
-                        .andExpect(jsonPath("$.data", is("User registered succesfully")));
+                        .andExpect(jsonPath("$.payload", is("User registered succesfully")));
             }
         }
     }
