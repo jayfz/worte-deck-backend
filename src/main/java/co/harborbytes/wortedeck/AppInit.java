@@ -7,7 +7,6 @@ import co.harborbytes.wortedeck.usermanagement.User;
 import co.harborbytes.wortedeck.usermanagement.UserRepository;
 import co.harborbytes.wortedeck.words.*;
 import co.harborbytes.wortedeck.words.dtos.WordDTO;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,18 +17,14 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.SortDefault;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class AppInit implements ApplicationRunner {

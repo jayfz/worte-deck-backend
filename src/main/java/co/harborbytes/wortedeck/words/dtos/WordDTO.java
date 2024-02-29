@@ -3,8 +3,6 @@ package co.harborbytes.wortedeck.words.dtos;
 import co.harborbytes.wortedeck.words.NounGender;
 import co.harborbytes.wortedeck.words.WordType;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 

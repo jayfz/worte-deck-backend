@@ -1,7 +1,6 @@
 package co.harborbytes.wortedeck.words;
 
 import co.harborbytes.wortedeck.usermanagement.User;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

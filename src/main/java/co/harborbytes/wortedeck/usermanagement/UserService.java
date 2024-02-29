@@ -5,7 +5,6 @@ import co.harborbytes.wortedeck.usermanagement.dto.UserCreateInputDTO;
 import co.harborbytes.wortedeck.usermanagement.dto.UserLoginDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
