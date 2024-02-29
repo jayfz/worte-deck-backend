@@ -4,6 +4,7 @@ import co.harborbytes.wortedeck.usermanagement.dto.UserAuthenticatedDTO;
 import co.harborbytes.wortedeck.usermanagement.dto.UserCreateInputDTO;
 import co.harborbytes.wortedeck.usermanagement.dto.UserLoginDTO;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
@@ -20,17 +22,6 @@ public class UserService {
     private final static String userCreatedSuccesfullyMessage = "User registered succesfully";
     private final AuthenticationManager authenticationManager;
     private final GoogleTokenVerificationService googleTokenVerificationService;
-
-    @Autowired
-    public UserService(final UserRepository userRepository, final UserMapper userMapper, final PasswordEncoder passwordEncoder, final JwtTokenUtil jwtTokenUtil, final AuthenticationManager authenticationManager, final GoogleTokenVerificationService googleTokenVerificationService) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenUtil = jwtTokenUtil;
-        this.authenticationManager = authenticationManager;
-        this.googleTokenVerificationService = googleTokenVerificationService;
-
-    }
 
     @Transactional
     public String register(final UserCreateInputDTO userCreateInputDTO) {
