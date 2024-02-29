@@ -7,7 +7,6 @@ import co.harborbytes.wortedeck.usermanagement.dto.UserAuthenticatedDTO;
 import co.harborbytes.wortedeck.usermanagement.dto.UserCreateInputDTO;
 import co.harborbytes.wortedeck.usermanagement.dto.UserLoginDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
