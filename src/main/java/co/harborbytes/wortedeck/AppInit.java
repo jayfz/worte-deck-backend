@@ -1,9 +1,6 @@
 package co.harborbytes.wortedeck;
 
-import co.harborbytes.wortedeck.practicesession.PracticeSessionRepository;
-import co.harborbytes.wortedeck.practicesession.PracticeSessionResult;
-import co.harborbytes.wortedeck.practicesession.PracticeSessionResultDetail;
-import co.harborbytes.wortedeck.practicesession.PracticeSessionResultRepository;
+import co.harborbytes.wortedeck.practicesession.*;
 import co.harborbytes.wortedeck.usermanagement.Role;
 import co.harborbytes.wortedeck.usermanagement.User;
 import co.harborbytes.wortedeck.usermanagement.UserRepository;
@@ -60,6 +57,7 @@ public class AppInit implements ApplicationRunner {
         createAppPracticeSessionResults(false, false, false, true, true);
         createAppPracticeSessionResults(true, true, true, false, false);
         createAppPracticeSessionResults(false, true, false, true, false);
+        checkWordResults();
     }
 
     @Transactional
@@ -206,7 +204,12 @@ public class AppInit implements ApplicationRunner {
         results.setScore(score);
 
         this.practiceSessionResultRepository.save(results);
+    }
 
-
+    private void checkWordResults(){
+      List<WordFrequencyResult> results =  this.practiceSessionRepository.findWordsByPerformance(testUser.getId());
+          results.forEach(result -> {
+              System.out.println(String.format("word id: %s,  rightSwipeCount: %s", result.getWordId(), result.getRightSwipeCount()));
+          });
     }
 }
