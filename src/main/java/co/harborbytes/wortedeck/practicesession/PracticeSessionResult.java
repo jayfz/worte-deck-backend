@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 public class PracticeSessionResult {
 
-    public PracticeSessionResult(){
+    public PracticeSessionResult() {
         this.leftSwipesCount = 0L;
         this.rightSwipesCount = 0L;
         this.wordsTestedCount = 0L;
@@ -26,7 +26,6 @@ public class PracticeSessionResult {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     @NotNull
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -37,7 +36,6 @@ public class PracticeSessionResult {
     @Max(value = 5)
     @Column(name = "score", nullable = false, updatable = false, precision = 3, scale = 2)
     private BigDecimal score;
-
 
     @NotNull
     @PositiveOrZero
@@ -61,23 +59,11 @@ public class PracticeSessionResult {
 
 
     @NotNull
-    @OneToMany(
-            orphanRemoval = true,
-            cascade = {CascadeType.ALL},
-            mappedBy = "practiceSessionResult"
-    )
+    @OneToMany(orphanRemoval = true, cascade = {CascadeType.ALL}, mappedBy = "practiceSessionResult")
     private List<PracticeSessionResultDetail> practiceSessionResultDetails;
 
     @NotNull
-    @ManyToOne(optional = false)
-    @JoinColumn(
-            name = "user_id",
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(
-                    name = "PracticeSessionResult.userId_User.id_FK"
-            ),
-            updatable = false,
-            nullable = false
-    )
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "PracticeSessionResult.userId_User.id_FK"), updatable = false, nullable = false)
     private User user;
 }

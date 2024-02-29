@@ -1,10 +1,12 @@
 package co.harborbytes.wortedeck;
 
 import co.harborbytes.wortedeck.practicesession.*;
+import co.harborbytes.wortedeck.practicesession.dtos.PracticeSessionDTO;
 import co.harborbytes.wortedeck.usermanagement.Role;
 import co.harborbytes.wortedeck.usermanagement.User;
 import co.harborbytes.wortedeck.usermanagement.UserRepository;
 import co.harborbytes.wortedeck.words.*;
+import co.harborbytes.wortedeck.words.dtos.WordDTO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
@@ -13,6 +15,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -37,9 +43,10 @@ public class AppInit implements ApplicationRunner {
     private final Resource jsonTestWordsResource;
     private final ObjectMapper mapper;
     private final List<Word> testWords = new ArrayList<>();
+    private final PracticeSessionService practiceSessionService;
 
     @Autowired
-    public AppInit(final UserRepository userRepository, final PasswordEncoder passwordEncoder, final WordRepository wordRepository, final PracticeSessionRepository practiceSessionRepository, final PracticeSessionResultRepository practiceSessionResultRepository, @Value("classpath:startup.json") Resource jsonTestWordsResource, ObjectMapper mapper) {
+    public AppInit(final UserRepository userRepository, final PasswordEncoder passwordEncoder, final WordRepository wordRepository, final PracticeSessionRepository practiceSessionRepository, final PracticeSessionResultRepository practiceSessionResultRepository, @Value("classpath:startup.json") Resource jsonTestWordsResource, ObjectMapper mapper, PracticeSessionService practiceSessionService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.practiceSessionRepository = practiceSessionRepository;
@@ -47,6 +54,7 @@ public class AppInit implements ApplicationRunner {
         this.jsonTestWordsResource = jsonTestWordsResource;
         this.mapper = mapper;
         this.wordRepository = wordRepository;
+        this.practiceSessionService = practiceSessionService;
     }
 
     @Override
@@ -58,6 +66,7 @@ public class AppInit implements ApplicationRunner {
         createAppPracticeSessionResults(true, true, true, false, false);
         createAppPracticeSessionResults(false, true, false, true, false);
         checkWordResults();
+        createAndPrintPracticeSession();
     }
 
     @Transactional
@@ -211,5 +220,16 @@ public class AppInit implements ApplicationRunner {
           results.forEach(result -> {
               System.out.println(String.format("word id: %s,  rightSwipeCount: %s", result.getWordId(), result.getRightSwipeCount()));
           });
+    }
+
+    private void createAndPrintPracticeSession(){
+        final PracticeSessionDTO result = this.practiceSessionService.createPracticeSession(testUser.getId());
+        Page<WordDTO> words = this.practiceSessionService.getPracticeSessionWords(result.getPracticeSessionId(), PageRequest.of(0, 40, Sort.unsorted() ));
+        words.forEach((word) ->{
+            System.out.println(String.format("word: %s, type: %s", word.getWord(), word.getType()));
+        });
+
+        System.out.println(words.getTotalElements());
+
     }
 }

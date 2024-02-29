@@ -1,6 +1,7 @@
 package co.harborbytes.wortedeck.words;
 
 import co.harborbytes.wortedeck.usermanagement.User;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -16,6 +17,7 @@ import lombok.Setter;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
+
 public class Word {
 
     @Id
@@ -60,7 +62,8 @@ public class Word {
 
     @NotNull
     @ManyToOne(
-            optional = false
+            optional = false,
+            fetch = FetchType.LAZY
     )
     @JoinColumn(
             name = "user_id",
