@@ -60,6 +60,14 @@ public class Word {
     private String englishExample;
 
     @NotNull
+    @Column(name="matches")
+    private String[] matches;
+
+    @NotNull
+    @Column(name= "is_ready")
+    private boolean isReady;
+
+    @NotNull
     @ManyToOne(
             optional = false,
             fetch = FetchType.LAZY

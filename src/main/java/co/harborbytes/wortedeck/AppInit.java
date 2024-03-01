@@ -136,6 +136,8 @@ public class AppInit implements ApplicationRunner {
         word.setGermanExample("no german example added yet");
         word.setEnglishExample("no english example added yet");
         word.setGermanExampleRecordingURLs(new String[]{"none added yet"});
+        word.setReady(true);
+        word.setMatches(new String[]{});
         word.setUser(this.testUser);
     }
 

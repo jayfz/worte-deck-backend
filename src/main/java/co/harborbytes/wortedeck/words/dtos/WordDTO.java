@@ -19,6 +19,8 @@ public class WordDTO {
     private String germanExample;
     private String[] germanExampleRecordingURLs;
     private String englishExample;
+    private String matches;
+    private Boolean isReady;
 
     /* adjective properties */
     private Boolean isComparable;
