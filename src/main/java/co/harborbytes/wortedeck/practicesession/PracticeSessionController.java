@@ -1,11 +1,11 @@
 package co.harborbytes.wortedeck.practicesession;
 
-import co.harborbytes.wortedeck.practicesession.dtos.CreatePracticeSessionResultsDTO;
-import co.harborbytes.wortedeck.practicesession.dtos.PracticeSessionDTO;
+import co.harborbytes.wortedeck.practicesession.dtos.*;
 import co.harborbytes.wortedeck.shared.Success;
 import co.harborbytes.wortedeck.shared.SuccessPage;
 import co.harborbytes.wortedeck.usermanagement.User;
 import co.harborbytes.wortedeck.words.dtos.WordDTO;
+import co.harborbytes.wortedeck.words.dtos.WordStatsDTO;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,7 +40,24 @@ public class PracticeSessionController {
         return new Success<>(this.practiceSessionService.createPracticeSessionResults(getLoggedInUser().getId(), resultsDTO));
     }
 
+    @GetMapping("/results/stats/overall")
+    public Success<PracticeSessionStatsDTO> getPracticeSessionResultsOverall(){
+        return new Success<>(this.practiceSessionService.getPracticeSessionStats(getLoggedInUser().getId()));
+    }
+
+    @GetMapping("/results/stats/most-difficult-words")
+    public Success<List<DifficultWordDTO>> getMostDifficultWords(){
+        return new Success<>(this.practiceSessionService.getMostDifficultWords(getLoggedInUser().getId()));
+    }
+
+    @GetMapping("/results/summary")
+    public Success<List<PracticeSessionResultSummaryDTO>> getPracticeSessionResultsSummary(){
+        return new Success<>(this.practiceSessionService.getLastFewPracticeSessionResults(getLoggedInUser().getId()));
+    }
+
     private User getLoggedInUser() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
+
+
 }

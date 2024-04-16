@@ -1,5 +1,7 @@
 package co.harborbytes.wortedeck.practicesession;
 
+import co.harborbytes.wortedeck.practicesession.dtos.DifficultWordDTO;
+import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,4 +21,11 @@ public interface PracticeSessionRepository extends JpaRepository<PracticeSession
 
     @Query("SELECT p FROM PracticeSessionDetail p WHERE p.practiceSession.id = :practiceSessionId")
     Page<PracticeSessionDetail> findPracticeSessionDetails(@Param("practiceSessionId") Long practiceSessionId, Pageable page);
+
+    @Query("SELECT COUNT(*) FROM Word w WHERE w.user.id = :userId")
+    int findWordCountByUser(@Param("userId") Long userId);
+
+    @Query("SELECT new co.harborbytes.wortedeck.practicesession.dtos.DifficultWordDTO(psrd.word.id, psrd.word.word, psrd.word.englishTranslations, COUNT(psrd.word.id) AS difficultCount) FROM PracticeSessionResultDetail psrd WHERE psrd.word.user.id = :userId AND psrd.leftSwipe = TRUE GROUP BY psrd.word.id, psrd.word.word, psrd.word.englishTranslations ORDER BY difficultCount DESC")
+    List<DifficultWordDTO> findMostDifficultWordsByUser(@Param("userId") Long userId, Limit limit);
+
 }

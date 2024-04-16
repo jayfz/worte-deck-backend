@@ -1,15 +1,14 @@
 package co.harborbytes.wortedeck.practicesession;
 
 
-import co.harborbytes.wortedeck.practicesession.dtos.CreatePracticeSessionResultsDTO;
-import co.harborbytes.wortedeck.practicesession.dtos.PracticeSessionDTO;
-import co.harborbytes.wortedeck.practicesession.dtos.PracticeSessionMapper;
+import co.harborbytes.wortedeck.practicesession.dtos.*;
 import co.harborbytes.wortedeck.usermanagement.User;
 import co.harborbytes.wortedeck.words.Word;
 import co.harborbytes.wortedeck.words.dtos.WordDTO;
 import co.harborbytes.wortedeck.words.dtos.WordMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -18,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -32,6 +32,7 @@ public class PracticeSessionService {
 
     @Transactional
     public PracticeSessionDTO createPracticeSession(Long userId) {
+
         List<WordFrequencyResult> results = practiceSessionRepository.findWordsByPerformance(userId);
         List<PracticeSessionDetail> practiceSessionWords = new ArrayList<>();
         PracticeSession practiceSession = new PracticeSession();
@@ -137,5 +138,67 @@ public class PracticeSessionService {
         this.practiceSessionResultRepository.save(results);
         return "created at " + results.getCreatedAt().toString();
     }
+
+    public PracticeSessionStatsDTO getPracticeSessionStats(final Long userId){
+
+        List<PracticeSessionResult> results = this.practiceSessionResultRepository.findByUserId(userId);
+        int knownWords = getWordCountByUser(userId);
+
+        long secondsSpent = 0;
+        double averageScore = 0;
+        long leftSwipeCount = 0;
+        long rightSwipeCount = 0;
+
+        for (PracticeSessionResult result : results){
+            secondsSpent += result.getDurationInSeconds();
+            averageScore += result.getScore().doubleValue();
+            rightSwipeCount += result.getRightSwipesCount();
+            leftSwipeCount += result.getLeftSwipesCount();
+        }
+
+        if(!results.isEmpty()){
+           averageScore = averageScore / results.size();
+        }
+
+        return PracticeSessionStatsDTO
+                .builder()
+                .totalCount(results.size())
+                .secondsSpent(secondsSpent)
+                .averageScore(averageScore)
+                .leftSwipeCount(leftSwipeCount)
+                .rightSwipeCount(rightSwipeCount)
+                .vocabularyLevel(getVocabularyLevel(knownWords))
+                .build();
+
+    }
+
+    private PracticeSessionStatsDTO.VocabularyLevel getVocabularyLevel(int knownWordsCount){
+        return switch (knownWordsCount/1000){
+            case 0 -> PracticeSessionStatsDTO.VocabularyLevel.A1;
+            case 1 -> PracticeSessionStatsDTO.VocabularyLevel.A2;
+            case 2 -> PracticeSessionStatsDTO.VocabularyLevel.B1;
+            case 3 -> PracticeSessionStatsDTO.VocabularyLevel.B2;
+            case 4 -> PracticeSessionStatsDTO.VocabularyLevel.C1;
+            default -> PracticeSessionStatsDTO.VocabularyLevel.C2;
+        };
+    }
+
+    public int getWordCountByUser(final Long userId){
+        return this.practiceSessionRepository.findWordCountByUser(userId);
+    }
+
+    public List<DifficultWordDTO> getMostDifficultWords(final Long userId){
+        return this.practiceSessionRepository.findMostDifficultWordsByUser(userId, Limit.of(3));
+    }
+
+    public List<PracticeSessionResultSummaryDTO> getLastFewPracticeSessionResults (final Long userId){
+        return this.practiceSessionResultRepository.findByUserIdOrderByCreatedAtDesc(userId, Limit.of(3))
+                .stream()
+                .map(t -> this.practiceSessionMapper.practiceSessionResultToSummaryDTO(t))
+                .collect(Collectors.toList());
+    }
+
+
+
 
 }
