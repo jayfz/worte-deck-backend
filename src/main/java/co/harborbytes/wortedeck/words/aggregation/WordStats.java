@@ -1,10 +1,8 @@
 package co.harborbytes.wortedeck.words.aggregation;
 
-import co.harborbytes.wortedeck.words.WordType;
-import lombok.Getter;
-import lombok.Setter;
+import co.harborbytes.wortedeck.words.WordKind;
 
 public interface WordStats {
-    WordType getWordType();
+    WordKind getWordKind();
     Integer getCount();
 }

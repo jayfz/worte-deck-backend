@@ -8,11 +8,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "word", uniqueConstraints = {
-        @UniqueConstraint(name = "UniqueWordAndType", columnNames = {
-                "word", "type"
-        })
-})
+//@Table(name = "word", uniqueConstraints = {
+//        @UniqueConstraint(name = "word_word_and_kind_unique", columnNames = {
+//                "word", "type"
+//        })
+//})
+
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
@@ -24,14 +25,14 @@ public class Word {
     private Long id;
 
     @NotNull
-    @Size(min = 2, max = 128)
+    @Size(min = 1, max = 128)
     @Column(name = "word", nullable = false)
     private String word;
 
     @NotNull
-    @Enumerated(EnumType.ORDINAL)
-    @Column(name = "type", nullable = false)
-    private WordType type;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private WordKind kind;
 
     @NotNull
     @Column(name =  "pronunciations", nullable = false)
@@ -41,8 +42,8 @@ public class Word {
     @Column(name =  "english_translations", nullable = false)
     private String[] englishTranslations;
 
-    @NotNull
-    @Column(name ="recording_url")
+//    @NotNull
+    @Column(name ="recording_urls")
     private String[] recordingURLs;
 
     @NotNull
@@ -50,13 +51,13 @@ public class Word {
     @Column(name ="german_example", nullable = false)
     private String germanExample;
 
-    @NotNull
+//    @NotNull
     @Column(name ="german_example_recording_url")
     private String[] germanExampleRecordingURLs;
 
     @NotNull
     @Size(min = 2,  max = 256)
-    @Column(name ="english_example", nullable = false)
+    @Column(name ="english_example", nullable = false )
     private String englishExample;
 
     @NotNull
@@ -75,9 +76,9 @@ public class Word {
     @JoinColumn(
             name = "user_id",
             referencedColumnName = "id",
-            foreignKey = @ForeignKey(
-                    name = "Word.userId_User.id_FK"
-            ),
+//            foreignKey = @ForeignKey(
+//                    name = "FK_user_word"
+//            ),
             updatable = false,
             nullable = false
     )

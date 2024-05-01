@@ -1,6 +1,6 @@
 package co.harborbytes.wortedeck.words;
 
-public enum WordType {
+public enum WordKind {
     NOUN,
     ADJECTIVE,
     VERB,

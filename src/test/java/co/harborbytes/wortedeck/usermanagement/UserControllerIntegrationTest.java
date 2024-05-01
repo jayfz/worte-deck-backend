@@ -58,11 +58,11 @@ class UserControllerIntegrationTest {
     }
 
     @BeforeEach
-    private void setUpUser() {
+    public void setUpUser() {
         userRepository.deleteAll();
         userRepository.flush();
         User user = new User();
-        user.setRole(Role.USER);
+        user.setResponsibility(Role.USER);
         user.setEmail("user@example.com");
         user.setPassword(passwordEncoder.encode("secret43"));
         user.setFirstName("Giga");

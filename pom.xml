@@ -93,6 +93,10 @@
 			<artifactId>mapstruct-processor</artifactId>
 			<version>1.6.0.Beta1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
 		<!--Testing dependencies-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -110,7 +114,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -131,6 +134,18 @@
 							<artifactId>mapstruct</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+<!--				<groupId>com.redgate.flyway</groupId>-->
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>9.22.3</version>
+				<configuration>
+					<url>jdbc:postgresql://localhost:5432/worte_deck</url>
+					<user>keystracker_user</user>
+					<password>keystracker</password>
+					<cleanDisabled>false</cleanDisabled>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -14,7 +14,7 @@ public class Noun extends  Word{
 
     @NotNull
     @Column(name = "gender", nullable = false)
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private NounGender gender;
 
     @NotNull

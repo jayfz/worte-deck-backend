@@ -19,7 +19,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(name = "user_email_unique", columnNames = "email")
+        @UniqueConstraint(name = "users_email_unique", columnNames = "email")
 })
 public class User implements UserDetails {
 
@@ -39,6 +39,7 @@ public class User implements UserDetails {
 
     @NotNull
     @Size(min = 8, max = 64)
+    @Column(name = "secret")
     private String password;
 
     @NotEmpty
@@ -46,9 +47,8 @@ public class User implements UserDetails {
     private String email;
 
     @NotNull
-    @Column(name = "role")
-    @Enumerated(EnumType.ORDINAL)
-    private Role role;
+    @Enumerated(EnumType.STRING)
+    private Role responsibility;
 
     @NotNull
     @Column(name = "is_account_non_expired")
@@ -68,7 +68,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(responsibility.name()));
     }
 
     @Override

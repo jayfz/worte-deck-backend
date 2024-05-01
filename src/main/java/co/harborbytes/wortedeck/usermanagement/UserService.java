@@ -27,7 +27,7 @@ public class UserService {
 
         final User user = userMapper.dtoToUser(userCreateInputDTO);
         user.setPassword(passwordEncoder.encode(userCreateInputDTO.getPassword()));
-        user.setRole(Role.USER);
+        user.setResponsibility(Role.USER);
         userRepository.save(user);
 
         return userCreatedSuccesfullyMessage;

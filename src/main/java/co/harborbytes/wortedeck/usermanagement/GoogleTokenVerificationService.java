@@ -34,7 +34,7 @@ public class GoogleTokenVerificationService {
             final boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
 
             final User user = new User();
-            user.setRole(Role.USER);
+            user.setResponsibility(Role.USER);
             user.setEmail(payload.getEmail());
             user.setFirstName((String) payload.get("given_name"));
             user.setLastName((String) payload.get("family_name"));

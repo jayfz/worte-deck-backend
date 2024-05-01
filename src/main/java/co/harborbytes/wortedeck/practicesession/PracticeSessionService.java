@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
@@ -196,6 +197,12 @@ public class PracticeSessionService {
                 .stream()
                 .map(t -> this.practiceSessionMapper.practiceSessionResultToSummaryDTO(t))
                 .collect(Collectors.toList());
+    }
+
+    public Page<PracticeSessionResultSummaryDTO> getPracticeSessionResults(final Long userId, Pageable page){
+        return this.practiceSessionResultRepository.findByUserId(userId, page)
+                .map(practiceSessionMapper::practiceSessionResultToSummaryDTO);
+
     }
 
 

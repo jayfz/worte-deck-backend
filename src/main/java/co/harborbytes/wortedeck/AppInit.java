@@ -7,6 +7,7 @@ import co.harborbytes.wortedeck.usermanagement.User;
 import co.harborbytes.wortedeck.usermanagement.UserRepository;
 import co.harborbytes.wortedeck.words.*;
 import co.harborbytes.wortedeck.words.dtos.WordDTO;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -33,22 +36,34 @@ public class AppInit implements ApplicationRunner {
     private final PasswordEncoder passwordEncoder;
     private final PracticeSessionRepository practiceSessionRepository;
     private final PracticeSessionResultRepository practiceSessionResultRepository;
+    private final DictionaryWordRepository dictionaryWordRepository;
     private final WordRepository wordRepository;
     private User testUser;
     private final Resource jsonTestWordsResource;
+    private final Resource jsonRawWordsResource;
     private final ObjectMapper mapper;
     private final List<Word> testWords = new ArrayList<>();
     private final PracticeSessionService practiceSessionService;
 
     @Autowired
-    public AppInit(final UserRepository userRepository, final PasswordEncoder passwordEncoder, final WordRepository wordRepository, final PracticeSessionRepository practiceSessionRepository, final PracticeSessionResultRepository practiceSessionResultRepository, @Value("classpath:startup.json") Resource jsonTestWordsResource, ObjectMapper mapper, PracticeSessionService practiceSessionService) {
+    public AppInit(final UserRepository userRepository,
+                   final PasswordEncoder passwordEncoder,
+                   final WordRepository wordRepository,
+                   final DictionaryWordRepository dictionaryWordRepository,
+                   final PracticeSessionRepository practiceSessionRepository,
+                   final PracticeSessionResultRepository practiceSessionResultRepository,
+                   @Value("classpath:startup.json") Resource jsonTestWordsResource,
+                   @Value("classpath:parsed-and-scrapped.json") Resource rawWordsResource,
+                   ObjectMapper mapper, PracticeSessionService practiceSessionService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.practiceSessionRepository = practiceSessionRepository;
         this.practiceSessionResultRepository = practiceSessionResultRepository;
         this.jsonTestWordsResource = jsonTestWordsResource;
-        this.mapper = mapper;
+        this.jsonRawWordsResource = rawWordsResource;
+        this.mapper = mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
         this.wordRepository = wordRepository;
+        this.dictionaryWordRepository = dictionaryWordRepository;
         this.practiceSessionService = practiceSessionService;
     }
 
@@ -62,6 +77,8 @@ public class AppInit implements ApplicationRunner {
         createAppPracticeSessionResults(false, true, false, true, false);
         checkWordResults();
         createAndPrintPracticeSession();
+        readAndPopulateRawWordsRepository();
+        System.out.println("done filling up db");
     }
 
     @Transactional
@@ -70,7 +87,7 @@ public class AppInit implements ApplicationRunner {
         user.setFirstName("Carlos");
         user.setLastName("Bacca");
         user.setEmail("carlos.bacca@gmail.com");
-        user.setRole(Role.USER);
+        user.setResponsibility(Role.USER);
         user.setPassword(passwordEncoder.encode("12345678"));
         this.testUser = user;
         userRepository.save(user);
@@ -78,10 +95,10 @@ public class AppInit implements ApplicationRunner {
 
     @Transactional
     private void createAppTestWords() {
-        List<RawWord> sampleWords = getWordsFromJson();
+        List<DictionaryWord> sampleWords = getWordsFromJson();
         sampleWords.stream().forEach((sampleWord -> {
 
-            if (sampleWord.getType().equals(WordType.NOUN)) {
+            if (sampleWord.getKind().equals(co.harborbytes.wortedeck.words.WordKind.NOUN)) {
                 Noun noun = new Noun();
                 noun.setPlural(sampleWord.getNounPlural() == null ? "noplural" : sampleWord.getNounPlural());
                 noun.setGender(sampleWord.getNounGender() == null ? NounGender.NEUTER : sampleWord.getNounGender());
@@ -90,7 +107,7 @@ public class AppInit implements ApplicationRunner {
                 this.testWords.add(noun);
             }
 
-            if (sampleWord.getType().equals(WordType.ADJECTIVE)) {
+            if (sampleWord.getKind().equals(co.harborbytes.wortedeck.words.WordKind.ADJECTIVE)) {
                 Adjective adjective = new Adjective();
                 adjective.setIsComparable(sampleWord.getAdjectiveComparable() == null ? false : sampleWord.getAdjectiveComparable());
                 adjective.setComparative(sampleWord.getAdjectiveComparative());
@@ -101,7 +118,7 @@ public class AppInit implements ApplicationRunner {
             }
 
 
-            if (sampleWord.getType().equals(WordType.VERB)) {
+            if (sampleWord.getKind().equals(co.harborbytes.wortedeck.words.WordKind.VERB)) {
                 Verb verb = new Verb();
                 verb.setHasPrefix(sampleWord.getVerbWithPrefix() != null && sampleWord.getVerbWithPrefix());
                 verb.setIsSeparable(sampleWord.getVerbSeparable() != null && sampleWord.getVerbSeparable());
@@ -111,14 +128,14 @@ public class AppInit implements ApplicationRunner {
                 this.testWords.add(verb);
             }
 
-            if (sampleWord.getType().equals(WordType.ADVERB)) {
+            if (sampleWord.getKind().equals(co.harborbytes.wortedeck.words.WordKind.ADVERB)) {
                 Adverb adverb = new Adverb();
                 this.setBasicWordDetails(sampleWord, adverb);
                 this.wordRepository.save(adverb);
                 this.testWords.add(adverb);
             }
 
-            if (sampleWord.getType().equals((WordType.COMMON_EXPRESSION))) {
+            if (sampleWord.getKind().equals((co.harborbytes.wortedeck.words.WordKind.COMMON_EXPRESSION))) {
                 CommonExpression commonExpression = new CommonExpression();
                 this.setBasicWordDetails(sampleWord, commonExpression);
                 this.wordRepository.save(commonExpression);
@@ -127,10 +144,10 @@ public class AppInit implements ApplicationRunner {
         }));
     }
 
-    private <T extends Word> void setBasicWordDetails(RawWord sampleWord, T word) {
+    private <T extends Word> void setBasicWordDetails(DictionaryWord sampleWord, T word) {
         word.setWord(sampleWord.getWord());
-        word.setType(sampleWord.getType());
-        word.setPronunciations(word.getPronunciations() == null ? new String[]{} : word.getPronunciations());
+        word.setKind(sampleWord.getKind());
+        word.setPronunciations(sampleWord.getPronunciations() == null ? new String[]{} : sampleWord.getPronunciations());
         word.setEnglishTranslations(sampleWord.getEnglishTranslations() == null ? new String[]{} : sampleWord.getEnglishTranslations());
         word.setRecordingURLs(sampleWord.getRecordingURLs() == null ? new String[]{} : sampleWord.getRecordingURLs());
         word.setGermanExample("no german example added yet");
@@ -142,16 +159,36 @@ public class AppInit implements ApplicationRunner {
     }
 
 
-    private List<RawWord> getWordsFromJson() {
+    private List<DictionaryWord> getWordsFromJson() {
 
         try {
-            List<RawWord> sampleWords = Arrays.asList(this.mapper.readValue(this.jsonTestWordsResource.getFile(), RawWord[].class));
+            List<DictionaryWord> sampleWords = Arrays.asList(this.mapper.readValue(this.jsonTestWordsResource.getFile(), DictionaryWord[].class));
             return sampleWords;
 
         } catch (Exception exception) {
             System.out.println(String.format("failure reading startup.json file %s", exception.getMessage()));
         }
         return null;
+    }
+
+    @Transactional
+    private void readAndPopulateRawWordsRepository(){
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader(this.jsonRawWordsResource.getFile()));
+            List<String> lines = reader.lines().toList();
+            List<DictionaryWord> dictionaryWords = new ArrayList<>();
+            for(String line: lines){
+                DictionaryWord dictionaryWord = this.mapper.readValue(line, DictionaryWord.class);
+                dictionaryWord.setPronunciations(dictionaryWord.getPronunciations());
+                dictionaryWord.setEnglishTranslations(dictionaryWord.getEnglishTranslations());
+                dictionaryWords.add(dictionaryWord);
+            }
+
+            dictionaryWordRepository.saveAll(dictionaryWords);
+        }
+        catch (Exception exception){
+            System.out.println(String.format("failure reading scrapped.json file %s, %s", exception.getMessage(), exception.getClass()));
+        }
     }
 
     @Transactional
