@@ -48,7 +48,10 @@ class UserControllerIntegrationTest {
     private User testUser;
 
     @Autowired
-    public UserControllerIntegrationTest(final MockMvc mvc, final UserRepository userRepository, final ObjectMapper jsonMapper, final PasswordEncoder passwordEncoder) {
+    public UserControllerIntegrationTest(final MockMvc mvc,
+                                         final UserRepository userRepository,
+                                         final ObjectMapper jsonMapper,
+                                         final PasswordEncoder passwordEncoder) {
         this.mvc = mvc;
         this.jsonMapper = jsonMapper;
         this.userRepository = userRepository;

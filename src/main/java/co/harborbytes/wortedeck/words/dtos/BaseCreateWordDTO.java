@@ -28,7 +28,7 @@ public abstract class BaseCreateWordDTO {
     private String word;
 
     @NotNull
-    private WordKind kind;
+    private WordKind type;
 
     @NotNull
     @NotEmpty

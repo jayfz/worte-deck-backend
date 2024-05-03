@@ -55,14 +55,22 @@ public abstract class WordMapper {
         if(baseWord instanceof  CreateAdverbDTO createAdverbDTO) return createAdverbDTOToWord(createAdverbDTO);
         if(baseWord instanceof CreateCommonExpressionDTO createCommonExpressionDTO ) return createCommonExpressionDTOToWord(createCommonExpressionDTO);
 
-        throw new RuntimeException("Unknown word type: " + baseWord.getKind().toString());
+        throw new RuntimeException("Unknown word type: " + baseWord.getType().toString());
 
     }
-
+    @Mapping(source = "type", target = "kind")
     public abstract Noun createNounDTOToWord(CreateNounDTO createNounDTO);
+
+    @Mapping(source = "type", target = "kind")
     public abstract Adjective createAdjectiveDTOToWord(CreateAdjectiveDTO createAdjectiveDTO);
+
+    @Mapping(source = "type", target = "kind")
     public abstract Verb createVerbDTOToWord(CreateVerbDTO createVerbDTO);
+
+    @Mapping(source = "type", target = "kind")
     public abstract Adverb createAdverbDTOToWord(CreateAdverbDTO createAdverbDTO);
+
+    @Mapping(source = "type", target = "kind")
     public abstract CommonExpression createCommonExpressionDTOToWord(CreateCommonExpressionDTO createCommonExpressionDTO);
 
 }

@@ -1,0 +1,47 @@
+name: Deploy to AWS ECS
+
+on:
+  release:
+    released
+
+jobs:
+  run-unit-tests:
+    runs-on: linux
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'corretto'
+
+      - name: Setup Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: 3.9.5
+
+      - name: Unit tests
+        run: mvn clean package
+
+      - name: Rename the artifact
+        run: cp target/wortedeck-0.0.1-SNAPSHOT.jar wortedeck-{{ github.sha }}.jar
+
+      - name: Save artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: wortedeck
+          path: wortedeck-{{ github.sha }}.jar
+
+  dummy-deploy:
+    runs-on: linux
+    needs: run-unit-tests
+    steps:
+      - name: Get the artifact
+        uses: actions/download-artifact@master
+        with:
+          name: wortedeck
+
+      - name: Fake deploy
+        run: ls wortedeck*.jar

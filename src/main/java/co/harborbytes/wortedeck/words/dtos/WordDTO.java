@@ -20,7 +20,7 @@ public class WordDTO {
     private String[] germanExampleRecordingURLs;
     private String englishExample;
     private String[] matches;
-    private Boolean isReady;
+    private boolean isReady;
 
     /* adjective properties */
     private Boolean isComparable;
