@@ -25,3 +25,19 @@ jobs:
 
       - name: All the tests and coverage checks
         run: mvn clean install
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: wortedeck-test
+          POSTGRES_PASSWORD: wortedeck-test
+          POSTGRES_DB: worte_deck_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+          
